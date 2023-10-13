@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using BooksEcommece.DataAccess.Repository.IRepository;
 
 
-namespace BooksEcommerceWeb.Controllers
+namespace BooksEcommerceWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepo;
@@ -46,14 +47,14 @@ namespace BooksEcommerceWeb.Controllers
 
         public IActionResult Edit(int? id)
         {
-            if (id == null || id == 0 ) 
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-            Category categoryFromDb = _categoryRepo.Get(p => p.Id==id);
+            Category categoryFromDb = _categoryRepo.Get(p => p.Id == id);
 
-            if (categoryFromDb == null) 
+            if (categoryFromDb == null)
             {
                 return NotFound();
             }
@@ -62,7 +63,7 @@ namespace BooksEcommerceWeb.Controllers
         [HttpPost]
         public IActionResult Edit(Category obj)
         {
-           
+
             if (ModelState.IsValid)
             {
                 _categoryRepo.Update(obj);
@@ -93,7 +94,7 @@ namespace BooksEcommerceWeb.Controllers
         public IActionResult DeletePOST(int? id)
         {
             Category categoryObj = _categoryRepo.Get(p => p.Id == id);
-            if (categoryObj == null) 
+            if (categoryObj == null)
             {
                 return NotFound();
             }
@@ -102,7 +103,7 @@ namespace BooksEcommerceWeb.Controllers
             _categoryRepo.SaveChanges();
             TempData["success"] = "Category Deleted Successfully";
             return RedirectToAction("Index");
-                     
+
         }
 
     }

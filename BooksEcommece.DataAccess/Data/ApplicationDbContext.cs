@@ -1,4 +1,5 @@
-﻿using BooksEcommerceWeb.Models;
+﻿
+using BooksEcommerceWeb.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BooksEcommerceWeb.Data

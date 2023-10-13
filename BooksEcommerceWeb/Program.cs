@@ -1,5 +1,5 @@
-using BooksEcommerceWeb.Data;
-using Microsoft.EntityFrameworkCore;
+global using BooksEcommerceWeb.Data;
+global using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

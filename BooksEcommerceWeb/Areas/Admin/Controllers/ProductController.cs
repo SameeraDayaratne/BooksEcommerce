@@ -12,11 +12,13 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
     {
         private readonly IProductRepository _productRepo;
         private readonly ICategoryRepository _categoryRepo;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(IProductRepository dbProd, ICategoryRepository dbCat)
+        public ProductController(IProductRepository dbProd, ICategoryRepository dbCat, IWebHostEnvironment webHostEnvironment)
         {
             _productRepo = dbProd;
             _categoryRepo = dbCat;
+            _webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
@@ -66,8 +68,21 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if(file != null)
+                {
+                    string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\product");
+
+                    using(var fileStream = new FileStream(Path.Combine(productPath,filename),FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    productVM.Product.Imageurl = @"\images\product\" + filename;
+                }
                 _productRepo.Add(productVM.Product);
-                _productRepo.SaveChanges();
+                _productRepo.SaveChanges(); 
                 TempData["success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
             }

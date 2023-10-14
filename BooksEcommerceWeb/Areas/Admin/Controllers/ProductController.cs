@@ -45,7 +45,7 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
             return View(productVM);
         }
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Create(ProductVM productVM)
         {
             /*if(obj.Name == obj.DisplayOrder.ToString())
             {
@@ -54,12 +54,24 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                _productRepo.Add(obj);
+                _productRepo.Add(productVM.Product);
                 _productRepo.SaveChanges();
                 TempData["success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
             }
-            return View();
+            else
+            {
+                IEnumerable<SelectListItem> categoryList = _categoryRepo.GetAll().Select(u =>
+                new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }
+                );
+
+                productVM.CategoryList = categoryList;
+            }
+            return View(productVM);
 
         }
 

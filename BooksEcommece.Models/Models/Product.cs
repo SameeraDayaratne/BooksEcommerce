@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BooksEcommerceWeb.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace BooksEcommece.Models.Models
 {
@@ -44,6 +45,7 @@ namespace BooksEcommece.Models.Models
 
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
+        [ValidateNever]
         public Category Category { get; set; }
 
         public string Imageurl { get; set; }

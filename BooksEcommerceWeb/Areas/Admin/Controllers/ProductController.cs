@@ -1,7 +1,9 @@
 ﻿using BooksEcommece.DataAccess.Repository.IRepository;
 using BooksEcommece.Models.Models;
+using BooksEcommece.Models.Models.ViewModels;
 using BooksEcommerceWeb.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BooksEcommerceWeb.Areas.Admin.Controllers
 {
@@ -9,20 +11,38 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepo;
+        private readonly ICategoryRepository _categoryRepo;
 
-        public ProductController(IProductRepository db)
+        public ProductController(IProductRepository dbProd, ICategoryRepository dbCat)
         {
-            _productRepo = db;
+            _productRepo = dbProd;
+            _categoryRepo = dbCat;
         }
         public IActionResult Index()
         {
             List<Product> productList = _productRepo.GetAll().ToList();
+            
             return View(productList);
         }
 
         public IActionResult Create()
         {
-            return View();
+            
+            IEnumerable<SelectListItem> categoryList = _categoryRepo.GetAll().Select(u =>
+            new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            }
+            );
+
+            ProductVM productVM = new ProductVM()
+            {
+                CategoryList = categoryList,
+                Product = new Product()
+            };
+
+            return View(productVM);
         }
         [HttpPost]
         public IActionResult Create(Product obj)

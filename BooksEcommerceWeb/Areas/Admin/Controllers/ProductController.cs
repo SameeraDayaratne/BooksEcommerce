@@ -22,7 +22,7 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<Product> productList = _productRepo.GetAll().ToList();
+            List<Product> productList = _productRepo.GetAll("Category").ToList();
             
             return View(productList);
         }

@@ -74,6 +74,16 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
                     string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
 
+                    if(!string.IsNullOrEmpty(productVM.Product.Imageurl))
+                    {
+                        var oldImagePath = Path.Combine(wwwRootPath, productVM.Product.Imageurl.TrimStart('\\'));
+                    
+                        if(System.IO.File.Exists(oldImagePath)) 
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
                     using(var fileStream = new FileStream(Path.Combine(productPath,filename),FileMode.Create))
                     {
                         file.CopyTo(fileStream);
@@ -81,7 +91,17 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
 
                     productVM.Product.Imageurl = @"\images\product\" + filename;
                 }
-                _productRepo.Add(productVM.Product);
+
+                if(productVM.Product.Id == 0)
+                {
+                    _productRepo.Add(productVM.Product);
+                }
+                else
+                {
+                    _productRepo.Update(productVM.Product);
+                }
+
+                
                 _productRepo.SaveChanges(); 
                 TempData["success"] = "Product Created Successfully";
                 return RedirectToAction("Index");

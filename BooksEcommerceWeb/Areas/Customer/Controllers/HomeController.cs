@@ -1,4 +1,6 @@
-﻿using BooksEcommerceWeb.Models;
+﻿using BooksEcommece.DataAccess.Repository.IRepository;
+using BooksEcommece.Models.Models;
+using BooksEcommerceWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,16 +9,17 @@ namespace BooksEcommerceWeb.Areas.Customer.Controllers
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IProductRepository _productRepo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IProductRepository db)
         {
-            _logger = logger;
+            _productRepo = db;
         }
 
         public IActionResult Index()
         {
-            return View();
+            IEnumerable<Product> productList = _productRepo.GetAll("Category").ToList();
+            return View(productList);
         }
 
         public IActionResult Privacy()

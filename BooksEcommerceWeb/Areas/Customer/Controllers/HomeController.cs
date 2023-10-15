@@ -22,6 +22,14 @@ namespace BooksEcommerceWeb.Areas.Customer.Controllers
             return View(productList);
         }
 
+        public IActionResult Details(int? id)
+        {
+            Product product = _productRepo.Get(u => u.Id == id, "Category");
+
+            return View(product);
+        }
+
+
         public IActionResult Privacy()
         {
             return View();

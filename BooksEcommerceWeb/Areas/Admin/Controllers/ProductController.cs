@@ -154,5 +154,16 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
             return RedirectToAction("Index");
 
         }
+
+        #region
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> productList = _productRepo.GetAll("Category").ToList();
+
+            return Json(new { data = productList });
+
+        }
+        #endregion
     }
 }

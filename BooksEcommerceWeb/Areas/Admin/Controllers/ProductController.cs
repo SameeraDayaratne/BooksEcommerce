@@ -23,7 +23,7 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             List<Product> productList = _productRepo.GetAll("Category").ToList();
-            
+
             return View(productList);
         }
 
@@ -56,10 +56,10 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
                 return View(productVM);
             }
 
-            
+
         }
         [HttpPost]
-        public IActionResult Upsert(ProductVM productVM , IFormFile? file)
+        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
         {
             /*if(obj.Name == obj.DisplayOrder.ToString())
             {
@@ -69,22 +69,22 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if(file != null)
+                if (file != null)
                 {
                     string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
 
-                    if(!string.IsNullOrEmpty(productVM.Product.Imageurl))
+                    if (!string.IsNullOrEmpty(productVM.Product.Imageurl))
                     {
                         var oldImagePath = Path.Combine(wwwRootPath, productVM.Product.Imageurl.TrimStart('\\'));
-                    
-                        if(System.IO.File.Exists(oldImagePath)) 
+
+                        if (System.IO.File.Exists(oldImagePath))
                         {
                             System.IO.File.Delete(oldImagePath);
                         }
                     }
 
-                    using(var fileStream = new FileStream(Path.Combine(productPath,filename),FileMode.Create))
+                    using (var fileStream = new FileStream(Path.Combine(productPath, filename), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
@@ -92,7 +92,7 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
                     productVM.Product.Imageurl = @"\images\product\" + filename;
                 }
 
-                if(productVM.Product.Id == 0)
+                if (productVM.Product.Id == 0)
                 {
                     _productRepo.Add(productVM.Product);
                 }
@@ -101,8 +101,8 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
                     _productRepo.Update(productVM.Product);
                 }
 
-                
-                _productRepo.SaveChanges(); 
+
+                _productRepo.SaveChanges();
                 TempData["success"] = "Product Created Successfully";
                 return RedirectToAction("Index");
             }
@@ -122,9 +122,9 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
 
         }
 
-       
 
-        public IActionResult Delete(int? id)
+
+        /*public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
             {
@@ -153,7 +153,7 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
             TempData["success"] = "Product Deleted Successfully";
             return RedirectToAction("Index");
 
-        }
+        }*/
 
         #region
         [HttpGet]
@@ -162,6 +162,31 @@ namespace BooksEcommerceWeb.Areas.Admin.Controllers
             List<Product> productList = _productRepo.GetAll("Category").ToList();
 
             return Json(new { data = productList });
+
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            Product productFromDb = _productRepo.Get(p => p.Id == id);
+
+            if (productFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+
+            }
+
+            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productFromDb.Imageurl.TrimStart('\\'));
+
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+
+            _productRepo.Remove(productFromDb);
+            _productRepo.SaveChanges();
+
+            return Json(new { success = true, message = "Successfully deleted" });
 
         }
         #endregion
